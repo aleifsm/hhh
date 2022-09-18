@@ -114,7 +114,7 @@ class AOFPoker:
                 payouts[place] = sum(pot) - BB
         else:
             total_in_pot = sum(pot)
-            output_stream = os.popen("./poker-eval/examples/pokenum -h -t " + input)
+            output_stream = os.popen("../poker-eval/examples/pokenum -h -t " + input)
             odds = output_stream.readline().strip().split(" ")
             odd_start = 2
             for i in range(0, len(history)):
