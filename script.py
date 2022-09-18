@@ -235,7 +235,7 @@ def pretty_print_infoset_name(name) -> str:
     return name
 
 if __name__ == "__main__":
-    num_iterations = 5000
+    num_iterations = 10
     count = 0
 
     np.set_printoptions(precision=4, floatmode='fixed', suppress=True)
