@@ -1,10 +1,3 @@
-while getopts i:k: flag
-do
-    case "${flag}" in
-        i) id=${OPTARG};;
-        k) key=${OPTARG};;
-    esac
-done
 sudo chmod -R 777 /home/ec2-user/poker-eval/
 sudo chmod 777 /home/ec2-user/hhh/payouts.json
 cd /home/ec2-user/poker-eval/
@@ -13,4 +6,4 @@ make
 cd /home/ec2-user/hhh/
 python3 -m pip install numpy
 python3 -m pip install boto3
-python3 /home/ec2-user/hhh/script.py $id $key
+python3 /home/ec2-user/hhh/script.py $1 $2
