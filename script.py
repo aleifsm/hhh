@@ -7,7 +7,6 @@ import re
 import json
 import string
 import boto3
-import sys
 
 from datetime import datetime
 
@@ -259,8 +258,8 @@ if __name__ == "__main__":
         all_payouts = {}
 
         session = boto3.Session(
-            aws_access_key_id=sys.argv[1],
-            aws_secret_access_key=sys.argv[2],
+            aws_access_key_id=os.environ['AWS_ID'],
+            aws_secret_access_key=os.environ['AWS_KEY'],
         )
         s3 = session.resource('s3')
         s3.meta.client.upload_file(Filename="payouts.json", Bucket='aof-payouts', Key=file_name)
