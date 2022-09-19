@@ -253,7 +253,7 @@ if __name__ == "__main__":
         date = datetime.now().strftime("%d-%m-%Y-%H-%M")
         print("Writing results to file")
         file_name = f"payouts-{num_iterations}-{date}-{s}.json"
-        with open(file_name, "w") as outfile:
+        with open("payouts.json", "w") as outfile:
             json.dump(all_payouts, outfile)
         all_payouts = {}
 
@@ -262,5 +262,4 @@ if __name__ == "__main__":
             aws_secret_access_key=os.environ['AWS_KEY'],
         )
         s3 = session.resource('s3')
-        s3.meta.client.upload_file(Filename=file_name, Bucket='aof-payouts', Key=file_name)
-        os.remove(file_name)
+        s3.meta.client.upload_file(Filename="payouts.json", Bucket='aof-payouts', Key=file_name)
