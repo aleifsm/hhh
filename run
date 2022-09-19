@@ -1,4 +1,5 @@
 sudo chmod -R 777 /home/ec2-user/poker-eval/
+sudo chmod 777 /home/ec2-user/hhh/payouts.json
 cd /home/ec2-user/poker-eval/
 ./configure
 make
