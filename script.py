@@ -11,34 +11,12 @@ import sys
 
 from datetime import datetime
 
-import time
-# Print iterations progress
-def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 5, length = 100, fill = '█', printEnd = "\r"):
-    """
-    Call in a loop to create terminal progress bar
-    @params:
-        iteration   - Required  : current iteration (Int)
-        total       - Required  : total iterations (Int)
-        prefix      - Optional  : prefix string (Str)
-        suffix      - Optional  : suffix string (Str)
-        decimals    - Optional  : positive number of decimals in percent complete (Int)
-        length      - Optional  : character length of bar (Int)
-        fill        - Optional  : bar fill character (Str)
-        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
-    """
-    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-    filledLength = int(length * iteration // total)
-    bar = fill * filledLength + '-' * (length - filledLength)
-    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
-    # Print New Line on Complete
-    if iteration == total: 
-        print()
-
 ACTIONS = ['F', 'A']    # Fold vs All-in
 PLAYERS = 4             # Numbers of players
 STACK = 16              # Stack size
 BB = 2                  # Big blind
 SB = 1                  # Small blind
+RAKE = 0.3
 
 all_payouts = {}
 
@@ -90,13 +68,12 @@ class AOFPoker:
     @staticmethod
     def payouts(history, holdings):
         if history.startswith("FFF"):
-            return [0, 0, -SB, SB]
+            return [-RAKE, -RAKE, -SB-RAKE, SB-RAKE]
             
         pot = [0, 0, SB, BB]
-        payouts = [0, 0, -SB, -BB]
+        payouts = [-RAKE, -RAKE, -SB-RAKE, -BB-RAKE]
         place = 0
         input = ""
-
 
         for _ in range(0, len(history)):
             if history[_] == 'A':
@@ -104,14 +81,8 @@ class AOFPoker:
                 place = _
                 input += f" {holdings[_][1][0]} {holdings[_][1][1]}"
 
-                    
         if history.count("A") < 2:
-            if place < 2:
-                payouts[place] = sum(pot)
-            elif place == 2:
-                payouts[place] = sum(pot) - SB
-            elif place == 3:
-                payouts[place] = sum(pot) - BB
+            payouts[place] += sum(pot)
         else:
             total_in_pot = sum(pot)
             output_stream = os.popen("../poker-eval/examples/pokenum -h -t " + input)
@@ -119,7 +90,7 @@ class AOFPoker:
             odd_start = 2
             for i in range(0, len(history)):
                 if history[i] == 'A':
-                    payouts[i] = round(total_in_pot*float(odds[odd_start])-STACK, 4)
+                    payouts[i] += round(total_in_pot*float(odds[odd_start])-STACK, 4)
                     odd_start += 1
             hhhh = []
             
@@ -224,19 +195,17 @@ class AOFTrainer():
         utils = np.zeros(self.num_players)
         deck = Deck(4)
         for _ in range(num_iterations):
-            printProgressBar(_, num_iterations, prefix = 'Progress:', suffix = 'Complete', length = 50)
             cards = deck.deal()
             history = ''
             reach_probabilities = np.ones(self.num_players)
             utils += self.cfr(cards, history, reach_probabilities, 0)
-        printProgressBar(num_iterations, num_iterations, prefix = 'Progress:', suffix = 'Complete', length = 50)
         return utils
 
 def pretty_print_infoset_name(name) -> str:
     return name
 
 if __name__ == "__main__":
-    num_iterations = 1000
+    num_iterations = int(sys.argv[3])
     count = 0
 
     np.set_printoptions(precision=4, floatmode='fixed', suppress=True)
