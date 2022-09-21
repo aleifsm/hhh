@@ -90,7 +90,7 @@ class AOFPoker:
             odd_start = 2
             for i in range(0, len(history)):
                 if history[i] == 'A':
-                    payouts[i] = round(((total_in_pot)*float(odds[odd_start])-STACK)-(STACK*(1 - float(odds[odd_start]))), 4) - RAKE
+                    payouts[i] = round(total_in_pot * float(odds[odd_start]) - STACK - RAKE)
                     odd_start += 1
             hhhh = []
             
